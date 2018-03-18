@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    tools:context="com.lgf.slidecontentlayout.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#ff0000"
+        android:id="@+id/ll_search_head"
+        android:orientation="vertical"></LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/rl_data_content_layout"
+        android:background="#0000ff"
+        android:layout_below="@+id/ll_search_head"
+        android:layout_marginTop="10dp">
+
+    <com.lgf.slidecontentlayout.SlideContentLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="#00ff00"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentBottom="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="#00ffff"></LinearLayout>
+
+    </com.lgf.slidecontentlayout.SlideContentLayout>
+
+
+    </RelativeLayout>
+
+</RelativeLayout>
