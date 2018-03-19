@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.lgf.slidecontentlayout.SlideContentLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="500dp"
+    android:background="#00ff00">
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/recyclerview_data_list">
+
+    </android.support.v7.widget.RecyclerView>
+
+</com.lgf.slidecontentlayout.SlideContentLayout>
