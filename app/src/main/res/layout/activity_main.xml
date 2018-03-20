@@ -22,6 +22,18 @@
         android:layout_below="@+id/ll_search_head"
         android:layout_marginTop="10dp">
 
+        <com.lgf.slidecontentlayout.SlideContentLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/slide_layout">
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/recyclerview_data_list"
+                ></android.support.v7.widget.RecyclerView>
+        </com.lgf.slidecontentlayout.SlideContentLayout>
+
 
 
     </RelativeLayout>

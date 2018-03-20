@@ -40,17 +40,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViews(){
+//        mDataContainerLayout = (RelativeLayout) findViewById(R.id.rl_data_content_layout);
+//        LayoutInflater layoutInflater = LayoutInflater.from(this);
+//        View dataLayout = layoutInflater.inflate(R.layout.slide_content_layout, null);
+//        mDataRecyclerView = (RecyclerView) dataLayout.findViewById(R.id.recyclerview_data_list);
+//        mDataAdapter = new DataAdapter();
+//        mDataRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        mDataRecyclerView.setAdapter(mDataAdapter);
+//        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+//        dataLayout.setY(400);
+//        mDataContainerLayout.addView(dataLayout);
+
         mDataContainerLayout = (RelativeLayout) findViewById(R.id.rl_data_content_layout);
-        LayoutInflater layoutInflater = LayoutInflater.from(this);
-        View dataLayout = layoutInflater.inflate(R.layout.slide_content_layout, null);
-        mDataRecyclerView = (RecyclerView) dataLayout.findViewById(R.id.recyclerview_data_list);
+        mSlideContentLayout = (SlideContentLayout) findViewById(R.id.slide_layout);
+        mDataRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_data_list);
         mDataAdapter = new DataAdapter();
         mDataRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mDataRecyclerView.setAdapter(mDataAdapter);
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-        dataLayout.setY(400);
-        mDataContainerLayout.addView(dataLayout);
-
+        mSlideContentLayout.setY(600);
     }
 
     private class DataAdapter extends RecyclerView.Adapter<DataAdapter.DataViewHolder>{
