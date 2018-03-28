@@ -1,15 +1,12 @@
-package com.lgf.slidecontentlayout;
+package com.lgf.slidecontentlayout.slidecontentlayout;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
-import android.view.View;
 import android.widget.RelativeLayout;
 
 /**
@@ -19,8 +16,9 @@ import android.widget.RelativeLayout;
 /**
  * 仿百度地图的地址列表的上拉，下拉拖动效果
  * 需指定上拉的最大高度，还有下拉的最小高度
- * 原理：通过设置View的位置，实现View的移动(如果使用改变View的大小进行移动动画，会发生抖动的现象)，先通过onInterceptTouchEvent()进行
- * 事件的拦截（注意RecyclerView/ListView的滑动事件冲突的处理），然后通过onTouchEvent()进行事件的处理，这里是实现View的移动操作
+ * 原理：使用一个布局View包含RecyclerView，通过设置View的位置，实现View的移动(如果使用改变View的大小进行移动动画，会发生抖动的现象)，先通过onInterceptTouchEvent()进行
+ * 事件的拦截（注意RecyclerView/ListView的滑动事件冲突的处理），然后通过onTouchEvent()进行事件的处理，这里是实现View的移动操作的地方。
+ * 实现View在Y方向随手指移动是通过setY()接口，设置View在Y方向的位置，然后requestLayout()刷新View。
  */
 public class SlideContentLayout extends RelativeLayout {
 
@@ -30,11 +28,6 @@ public class SlideContentLayout extends RelativeLayout {
      * 是否第一次加载View的标志
      */
     private boolean hasLoadFlag = false;
-
-    /**
-     * 嵌套的View，为RecyclerView
-     */
-    private RecyclerView recyclerView;
 
     /**
      * 手指滑动的速度跟踪器
@@ -53,6 +46,7 @@ public class SlideContentLayout extends RelativeLayout {
      */
     float initY1;
 
+    private IInterceptChecker interceptChecker;
 
     private enum ContentMode {
         FULL_MODE,//全屏显示
@@ -82,13 +76,18 @@ public class SlideContentLayout extends RelativeLayout {
             Log.i(TAG, "onLayout getMeasuredWidth:" + getMeasuredWidth() + ",getMeasuredHeight:" + getMeasuredHeight());
             Log.i(TAG, "onLayout getWidth:" + getWidth() + ",getHeight:" + getHeight());
             hasLoadFlag = true;
-            recyclerView = (RecyclerView) getChildAt(0);
         }
     }
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        Log.i(TAG, "#### dispatchTouchEvent : " + ev.getAction());
+        return super.dispatchTouchEvent(ev);
+    }
 
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        Log.i(TAG, "#### onInterceptTouchEvent.... ");
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 Log.i(TAG, "#### onInterceptTouchEvent  ACTION_DOWN ");
@@ -104,25 +103,25 @@ public class SlideContentLayout extends RelativeLayout {
             case MotionEvent.ACTION_MOVE:
                 Log.i(TAG, "#### onInterceptTouchEvent  ACTION_MOVE ");
                 float delY1 = ev.getRawY() - initY1;
-                Log.i(TAG, "####onInterceptTouchEvent  ACTION_MOVE getY:" + getY());
-                Log.i(TAG, "####onInterceptTouchEvent  ACTION_MOVE shouldIntercept():" + shouldIntercept());
-                //手指下滑
-                //进行事件拦截判断
+                Log.i(TAG, "#### onInterceptTouchEvent  ACTION_MOVE getY:" + getY());
+                Log.i(TAG, "#### onInterceptTouchEvent  ACTION_MOVE shouldIntercept():" + shouldIntercept());
+                //手指下滑判断
                 if (delY1 > 0 && Math.abs(delY1) > 2) {
+                    //进行事件拦截条件判断
                     if (shouldIntercept() && (getY() == 0) || getY() > 0) {
                         initY1 = ev.getRawY();
-                        Log.i(TAG, "####onInterceptTouchEvent 11111111 return true... ");
+                        Log.i(TAG, "#### onInterceptTouchEvent 11111111 return true... ");
                         //进行事件拦截
                         return true;
                     }
                 }
 
-                //手指上滑
-                //进行事件拦截判断
+                //手指上滑判断
                 if (delY1 < 0 && Math.abs(delY1) > 2) {
+                    //进行事件拦截条件判断
                     if (getY() > 0) {
                         initY1 = ev.getRawY();
-                        Log.i(TAG, "####onInterceptTouchEvent 222222222 return true... ");
+                        Log.i(TAG, "#### onInterceptTouchEvent 222222222 return true... ");
                         //进行事件拦截
                         return true;
                     }
@@ -132,44 +131,38 @@ public class SlideContentLayout extends RelativeLayout {
                 Log.i(TAG, "#### onInterceptTouchEvent  ACTION_UP ");
                 break;
         }
-
         return super.onInterceptTouchEvent(ev);
     }
 
     /**
-     * recyclerview 是否已经拉到顶端
+     * 是否需要拦截事件，内部调用
      *
      * @return
      */
     private boolean shouldIntercept() {
-        View firstChild = recyclerView.getChildAt(0);
-        boolean shouldIntercept;
-        LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-        int firstVisiblePosition = linearLayoutManager.findFirstVisibleItemPosition();
-        if (firstVisiblePosition == 0 && firstChild.getTop() == 0) {
-            shouldIntercept = true;
-        } else {
-            shouldIntercept = false;
+        //默认拦截
+        if (interceptChecker == null){
+            return true;
         }
-        return shouldIntercept;
+        return interceptChecker.checkIfIntercept();
     }
-
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                Log.i(TAG, "#### onTouchEvent  ACTION_DOWN ");
 
                 break;
             case MotionEvent.ACTION_MOVE:
-                Log.i(TAG, "####onTouchEvent  ACTION_MOVE shouldIntercept():" + shouldIntercept());
+                Log.i(TAG, "#### onTouchEvent  ACTION_MOVE shouldIntercept():" + shouldIntercept());
 
-                Log.i(TAG, "####onTouchEvent  ACTION_MOVE getY:" + getY());
+                Log.i(TAG, "#### onTouchEvent  ACTION_MOVE getY:" + getY());
                 mVelocityTracker.addMovement(event);
                 mVelocityTracker.computeCurrentVelocity(1000);
 
                 float delY = event.getRawY() - initY1;
-                Log.i(TAG, "####onTouchEvent  ACTION_MOVE delY:" + delY);
+                Log.i(TAG, "#### onTouchEvent  ACTION_MOVE delY:" + delY);
 
                 //手指下滑
                 //delY的判断，消除上下抖动
@@ -177,7 +170,7 @@ public class SlideContentLayout extends RelativeLayout {
                     if (getY() >= 0) {
                         initY1 = event.getRawY();
                         setY(getY() + delY);
-                        Log.i(TAG, "####onTouchEvent  ACTION_MOVE down requestLayout:");
+                        Log.i(TAG, "#### onTouchEvent  ACTION_MOVE down requestLayout:");
 
                         requestLayout();
                         //进行事件消耗
@@ -194,7 +187,7 @@ public class SlideContentLayout extends RelativeLayout {
                         } else {
                             setY(getY() - Math.abs(delY));
                         }
-                        Log.i(TAG, "####onTouchEvent  ACTION_MOVE up requestLayout:");
+                        Log.i(TAG, "#### onTouchEvent  ACTION_MOVE up requestLayout:");
                         requestLayout();
                         //进行事件消耗
                         return true;
@@ -202,6 +195,8 @@ public class SlideContentLayout extends RelativeLayout {
                 }
                 break;
             case MotionEvent.ACTION_UP:
+                Log.i(TAG, "#### onTouchEvent  ACTION_UP ");
+
                 processFinishEvent();
                 recycleVelocityTracker();
                 break;
@@ -305,7 +300,7 @@ public class SlideContentLayout extends RelativeLayout {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 float result = (float) animation.getAnimatedValue();
-                Log.i(TAG, "#### onAnimationUpdate  onAnimationUpdate:" + result);
+//                Log.i(TAG, "#### onAnimationUpdate  onAnimationUpdate:" + result);
                 setY(currentPosition + result);
                 requestLayout();
             }
@@ -322,5 +317,13 @@ public class SlideContentLayout extends RelativeLayout {
             mVelocityTracker.recycle();
             mVelocityTracker = null;
         }
+    }
+
+    /**
+     * 设置拦截检测器
+     * @param interceptChecker
+     */
+    public void setInterceptChecker(IInterceptChecker interceptChecker){
+        this.interceptChecker = interceptChecker;
     }
 }

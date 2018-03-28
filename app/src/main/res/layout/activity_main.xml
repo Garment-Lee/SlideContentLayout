@@ -4,37 +4,58 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
-    tools:context="com.lgf.slidecontentlayout.MainActivity">
+    android:background="#ffffff">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="#ff0000"
         android:id="@+id/ll_search_head"
-        android:orientation="vertical"></LinearLayout>
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="I am the head title"
+            android:layout_gravity="center_vertical"/>
+    </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="match_parent"
         android:id="@+id/rl_data_content_layout"
-        android:background="#0000ff"
         android:layout_below="@+id/ll_search_head"
         android:layout_marginTop="10dp">
 
-        <com.lgf.slidecontentlayout.SlideContentLayout
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_test1"
+            android:text="click me to title layout activity"
+            android:layout_marginTop="20dp"
+            android:stateListAnimator="@null"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_test1"
+            android:text="i am a map"
+            android:layout_below="@id/btn_test1"/>
+
+        <com.lgf.slidecontentlayout.slidecontentlayout.SlideContentLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/slide_layout">
+            android:id="@+id/slide_layout"
+            android:background="#ffffff">
 
-            <android.support.v7.widget.RecyclerView
+            <com.lgf.slidecontentlayout.test.CustomRecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/recyclerview_data_list"
-                ></android.support.v7.widget.RecyclerView>
-        </com.lgf.slidecontentlayout.SlideContentLayout>
+                android:id="@+id/recyclerview_data_list">
+            </com.lgf.slidecontentlayout.test.CustomRecyclerView>
 
-
+        </com.lgf.slidecontentlayout.slidecontentlayout.SlideContentLayout>
 
     </RelativeLayout>
 

@@ -8,21 +8,28 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.lgf.slidecontentlayout.slidecontentlayout.IInterceptChecker;
+import com.lgf.slidecontentlayout.slidecontentlayout.SlideContentLayout;
+import com.lgf.slidecontentlayout.test.CustomRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener ,IInterceptChecker {
 
     private static final String TAG = "MainActivity";
 
     private RelativeLayout mDataContainerLayout;
     private SlideContentLayout mSlideContentLayout;
-    private RecyclerView mDataRecyclerView;
+    private CustomRecyclerView mDataRecyclerView;
     private List<String> mDatas = new ArrayList<>();
     private DataAdapter mDataAdapter;
+
+    private Button mTitleLayoutActivityBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,24 +47,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViews(){
-//        mDataContainerLayout = (RelativeLayout) findViewById(R.id.rl_data_content_layout);
-//        LayoutInflater layoutInflater = LayoutInflater.from(this);
-//        View dataLayout = layoutInflater.inflate(R.layout.slide_content_layout, null);
-//        mDataRecyclerView = (RecyclerView) dataLayout.findViewById(R.id.recyclerview_data_list);
-//        mDataAdapter = new DataAdapter();
-//        mDataRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        mDataRecyclerView.setAdapter(mDataAdapter);
-//        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-//        dataLayout.setY(400);
-//        mDataContainerLayout.addView(dataLayout);
-
         mDataContainerLayout = (RelativeLayout) findViewById(R.id.rl_data_content_layout);
         mSlideContentLayout = (SlideContentLayout) findViewById(R.id.slide_layout);
-        mDataRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_data_list);
+        //设置事件拦截器
+        mSlideContentLayout.setInterceptChecker(this);
+        mDataRecyclerView = (CustomRecyclerView) findViewById(R.id.recyclerview_data_list);
         mDataAdapter = new DataAdapter();
         mDataRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mDataRecyclerView.setAdapter(mDataAdapter);
-        mSlideContentLayout.setY(600);
+
+        mTitleLayoutActivityBtn = (Button) findViewById(R.id.btn_test1);
+        mTitleLayoutActivityBtn.setOnClickListener(this);
+//        mSlideContentLayout.setY(600);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btn_test1:
+
+                break;
+        }
+    }
+
+    @Override
+    public boolean checkIfIntercept() {
+        View firstChild = mDataRecyclerView.getChildAt(0);
+        boolean shouldIntercept;
+        LinearLayoutManager linearLayoutManager = (LinearLayoutManager) mDataRecyclerView.getLayoutManager();
+        int firstVisiblePosition = linearLayoutManager.findFirstVisibleItemPosition();
+        if (firstVisiblePosition == 0 && firstChild.getTop() == 0) {
+            shouldIntercept = true;
+        } else {
+            shouldIntercept = false;
+        }
+        return shouldIntercept;
     }
 
     private class DataAdapter extends RecyclerView.Adapter<DataAdapter.DataViewHolder>{
