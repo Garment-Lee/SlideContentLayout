@@ -127,5 +127,12 @@ mSlideContentLayout.setInterceptChecker(this);
 
 ```
 
+## 不足的地方
+　　SlideContentLayout位于①状态，此时手指上滑，此时SlideContentLayout不会拦截事件，嵌套View会上滑；上滑一段时间，手指下滑，此时嵌套View会下滑，当嵌套View的顶端处于可见状态，继续下滑时，SlideContentLayout不会拦截事件，执行下滑的动作。
+
+
+## 问题
+　　Demo中的嵌套View为RecyclerView，通过调试发现，滑动RecyclerView时，其父布局SlideContentLayout的onInterceptTouchEvent()不会被调用，所以SlideContentLayout无法拦截滑动事件，所以出现了上面的问题。
+
 
 
