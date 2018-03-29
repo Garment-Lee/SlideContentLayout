@@ -43,6 +43,7 @@
 
 ## 效果如下
 
+![](https://github.com/Garment-Lee/SlideContentLayout/raw/master/img/slidecontentlayout4.gif)  
 
 
 
