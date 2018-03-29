@@ -27,6 +27,9 @@
     
 ## 事件拦截机制分析
 
+![](https://github.com/Garment-Lee/SlideContentLayout/raw/master/img/slidecontentlayout.png)  
+
+
 #### 手指下滑
 	当SlideContentLayout位于①，当嵌套View已经滑动到最顶端时，SlideContentLayout拦截事件，随手指滑动进行向下移动操作。
 	当SlideContentLayout位于①-③之间，直接拦截事件，随手指滑动进行向下移动操作。
